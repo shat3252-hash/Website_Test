@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Portfolio — capture®</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #F1F1F1;
+    --black: #030303;
+    --white: #F2F2F2;
+    --dark: #010101;
+    --mid: #444;
+    --muted: #A8A8A8;
+    --radius-card: 24px;
+    --radius-sm: 16px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Manrope', sans-serif;
+    background: var(--bg);
+    color: var(--black);
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    width: min(605px, calc(100% - 32px));
+    height: 60px;
+    background: #010101;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px 0 20px;
+    justify-content: space-between;
+    transition: box-shadow 0.3s;
+  }
+  nav.scrolled { box-shadow: 0 8px 40px rgba(0,0,0,0.3); }
+
+  .nav-logo {
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: -0.05em;
+    color: #fff;
+    white-space: nowrap;
+    text-decoration: none;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+  }
+  .nav-links a {
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.75);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: #fff; }
+  .nav-links a.active { color: #fff; }
+
+  .nav-cta {
+    background: #F1F2F4;
+    color: #181C23;
+    border: none;
+    border-radius: 999px;
+    padding: 10px 24px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .nav-cta:hover { background: #fff; transform: scale(1.03); }
+
+  @media (max-width: 600px) {
+    .nav-links { display: none; }
+    nav { padding: 0 10px 0 16px; }
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    margin: 30px 30px 0;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    height: min(586px, 42vw);
+    min-height: 360px;
+    background: #000;
+  }
+  @media (max-width: 600px) {
+    .hero { margin: 16px 16px 0; height: 370px; border-radius: 20px; }
+  }
+
+  .hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 60%;
+    will-change: transform;
+    opacity: 0.85;
+    transform-origin: center center;
+  }
+  @media (max-width: 600px) {
+    .hero-img { object-position: center center; }
+  }
+
+  .hero-title {
+    position: absolute;
+    left: clamp(30px, 7vw, 105px);
+    bottom: clamp(30px, 6vw, 60px);
+    font-size: clamp(54px, 6vw, 70px);
+    font-weight: 700;
+    letter-spacing: -0.06em;
+    line-height: 1.1;
+    color: #F2F2F2;
+    pointer-events: none;
+  }
+
+  /* ── FILTER BAR ── */
+  .filter-bar {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 40px 92px 0;
+    flex-wrap: wrap;
+  }
+  @media (max-width: 900px) { .filter-bar { padding: 32px 24px 0; } }
+  @media (max-width: 600px) { .filter-bar { padding: 24px 16px 0; gap: 8px; } }
+
+  .filter-btn {
+    padding: 8px 20px;
+    border-radius: 999px;
+    border: 1.5px solid rgba(68,68,68,0.25);
+    background: transparent;
+    font-family: 'Manrope', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--mid);
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.15s;
+    white-space: nowrap;
+  }
+  .filter-btn:hover { border-color: var(--mid); color: var(--black); }
+  .filter-btn.active {
+    background: var(--black);
+    color: #fff;
+    border-color: var(--black);
+  }
+
+  /* ── GRID ── */
+  .portfolio-grid {
+    padding: 40px 92px 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    position: relative;
+  }
+  @media (max-width: 1100px) { .portfolio-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 900px) { .portfolio-grid { padding: 32px 24px 0; } }
+  @media (max-width: 600px) {
+    .portfolio-grid { grid-template-columns: 1fr; padding: 20px 16px 0; gap: 20px; }
+  }
+
+  /* decorative circle behind grid */
+  .grid-circle {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translate(-50%, -5%);
+    width: 664px;
+    height: 664px;
+    border-radius: 50%;
+    border: 1px solid rgba(225,228,232,0.9);
+    pointer-events: none;
+    z-index: 0;
+  }
+  @media (max-width: 600px) { .grid-circle { display: none; } }
+
+  .proj-item {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    cursor: pointer;
+  }
+
+  /* vertical offsets to match the staggered Figma layout */
+  .proj-item:nth-child(2) { margin-top: 74px; }
+  .proj-item:nth-child(4) { margin-top: 0; }
+  .proj-item:nth-child(5) { margin-top: 589px; margin-top: clamp(40px, 5vw, 80px); }
+  .proj-item:nth-child(6) { margin-top: 707px; margin-top: clamp(20px, 3vw, 60px); }
+  @media (max-width: 1100px) {
+    .proj-item:nth-child(2) { margin-top: 0; }
+    .proj-item:nth-child(5), .proj-item:nth-child(6) { margin-top: 0; }
+  }
+
+  .proj-img {
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    aspect-ratio: 370 / 366;
+    background: #ccc;
+    position: relative;
+  }
+  .proj-img.wide { aspect-ratio: 470 / 366; }
+
+  .proj-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    display: block;
+  }
+  .proj-item:hover .proj-img img { transform: scale(1.05); }
+
+  /* hover overlay */
+  .proj-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(3,3,3,0);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.35s ease;
+  }
+  .proj-item:hover .proj-overlay { background: rgba(3,3,3,0.18); }
+
+  .proj-view-btn {
+    opacity: 0;
+    transform: scale(0.85) translateY(8px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    background: rgba(255,255,255,0.9);
+    border: none;
+    border-radius: 999px;
+    padding: 10px 24px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--black);
+    cursor: pointer;
+    backdrop-filter: blur(4px);
+  }
+  .proj-item:hover .proj-view-btn {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+
+  .proj-title {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #040404;
+    line-height: 1.4;
+  }
+
+  /* ── TAGLINE MARQUEE ── */
+  .tagline-section {
+    padding: 80px 0 0;
+    overflow: hidden;
+  }
+  .marquee-track {
+    display: flex;
+    gap: 0;
+    white-space: nowrap;
+    will-change: transform;
+  }
+  .marquee-text {
+    font-size: clamp(64px, 8vw, 120px);
+    font-weight: 700;
+    letter-spacing: -0.06em;
+    color: var(--black);
+    flex-shrink: 0;
+    padding-right: 60px;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--dark);
+    padding: 80px 92px 0;
+    margin-top: 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  @media (max-width: 900px) { footer { padding: 60px 24px 0; margin-top: 60px; } }
+  @media (max-width: 600px) { footer { padding: 48px 16px 0; margin-top: 40px; } }
+
+  .footer-top {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 40px;
+    padding-bottom: 60px;
+    border-bottom: 1px solid rgba(80,94,113,0.5);
+  }
+  @media (max-width: 900px) { .footer-top { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 600px) { .footer-top { grid-template-columns: 1fr; } }
+
+  .footer-heading {
+    font-size: clamp(32px, 3.8vw, 54px);
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    line-height: 1.2;
+    color: var(--white);
+    max-width: 465px;
+    grid-column: span 2;
+  }
+  @media (max-width: 600px) { .footer-heading { grid-column: span 1; } }
+
+  .footer-col-label {
+    font-size: 15px;
+    font-weight: 500;
+    color: #767676;
+    margin-bottom: 12px;
+    letter-spacing: -0.01em;
+  }
+  .footer-col-value {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: -0.01em;
+  }
+
+  .footer-social-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+  }
+  .footer-social-btn {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: #fff;
+    border: none;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: #010101;
+    transition: background 0.2s, transform 0.15s;
+    text-decoration: none;
+  }
+  .footer-social-btn:hover { background: #e0e0e0; transform: scale(1.08); }
+
+  .footer-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .footer-nav a {
+    font-size: 16px;
+    font-weight: 500;
+    color: rgba(242,242,242,0.6);
+    text-decoration: none;
+    letter-spacing: -0.01em;
+    transition: color 0.2s;
+  }
+  .footer-nav a:hover { color: var(--white); }
+
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 0;
+  }
+  @media (max-width: 600px) { .footer-bottom { flex-direction: column; gap: 8px; align-items: flex-start; } }
+
+  .footer-copy {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: -0.01em;
+  }
+
+  .footer-wordmark {
+    position: relative;
+    height: 220px;
+    overflow: hidden;
+    margin: 0 -92px;
+    pointer-events: none;
+    user-select: none;
+  }
+  @media (max-width: 900px) { .footer-wordmark { height: 140px; margin: 0 -24px; } }
+  @media (max-width: 600px) { .footer-wordmark { height: 80px; margin: 0 -16px; } }
+
+  .footer-wordmark-text {
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: clamp(80px, 20vw, 280px);
+    font-weight: 500;
+    letter-spacing: -0.07em;
+    color: #fff;
+    white-space: nowrap;
+    font-family: 'Manrope', sans-serif;
+  }
+  .footer-frosted {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 80px;
+    background: rgba(255,255,255,0.03);
+  }
+
+  /* ── LIGHTBOX ── */
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(3,3,3,0.92);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+    backdrop-filter: blur(8px);
+  }
+  .lightbox.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .lb-inner {
+    position: relative;
+    max-width: min(900px, 92vw);
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transform: scale(0.93) translateY(16px);
+    transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .lightbox.open .lb-inner {
+    transform: scale(1) translateY(0);
+  }
+
+  .lb-img {
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    max-height: 75vh;
+  }
+  .lb-img img {
+    width: 100%;
+    max-height: 75vh;
+    object-fit: contain;
+    display: block;
+    border-radius: var(--radius-sm);
+  }
+
+  .lb-caption {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: -0.02em;
+    text-align: center;
+  }
+
+  .lb-close {
+    position: absolute;
+    top: -48px;
+    right: 0;
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.12);
+    border: none;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+  }
+  .lb-close:hover { background: rgba(255,255,255,0.22); }
+  .lb-close svg { width: 16px; height: 16px; }
+
+  .lb-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.12);
+    border: none;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .lb-nav:hover { background: rgba(255,255,255,0.25); transform: translateY(-50%) scale(1.08); }
+  .lb-nav.prev { left: -60px; }
+  .lb-nav.next { right: -60px; }
+  @media (max-width: 900px) {
+    .lb-nav.prev { left: 0; top: auto; bottom: -60px; transform: none; }
+    .lb-nav.next { right: 0; top: auto; bottom: -60px; transform: none; }
+    .lb-nav:hover { transform: scale(1.08); }
+  }
+
+  /* ── ANIMATIONS ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(36px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  .reveal-stagger > * {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal-stagger.visible > *:nth-child(1) { opacity:1; transform:none; transition-delay:0.05s; }
+  .reveal-stagger.visible > *:nth-child(2) { opacity:1; transform:none; transition-delay:0.12s; }
+  .reveal-stagger.visible > *:nth-child(3) { opacity:1; transform:none; transition-delay:0.20s; }
+  .reveal-stagger.visible > *:nth-child(4) { opacity:1; transform:none; transition-delay:0.28s; }
+  .reveal-stagger.visible > *:nth-child(5) { opacity:1; transform:none; transition-delay:0.36s; }
+  .reveal-stagger.visible > *:nth-child(6) { opacity:1; transform:none; transition-delay:0.44s; }
+  .reveal-stagger.visible > *:nth-child(7) { opacity:1; transform:none; transition-delay:0.52s; }
+  .reveal-stagger.visible > *:nth-child(8) { opacity:1; transform:none; transition-delay:0.60s; }
+
+  /* Cursor */
+  .cursor-dot {
+    position: fixed;
+    width: 8px; height: 8px;
+    background: #030303;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%,-50%);
+    mix-blend-mode: difference;
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 40px; height: 40px;
+    border: 1.5px solid rgba(3,3,3,0.35);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%,-50%);
+    transition: width 0.3s, height 0.3s, border-color 0.25s;
+    mix-blend-mode: difference;
+  }
+  @media (pointer: coarse) { .cursor-dot, .cursor-ring { display: none; } }
+
+  /* Page transition overlay */
+  .page-transition {
+    position: fixed;
+    inset: 0;
+    background: #010101;
+    z-index: 2000;
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.45s cubic-bezier(0.76, 0, 0.24, 1);
+    pointer-events: none;
+  }
+  .page-transition.entering {
+    transform: scaleY(1);
+    transform-origin: bottom;
+  }
+  .page-transition.exiting {
+    transform: scaleY(0);
+    transform-origin: top;
+  }
+</style>
+</head>
+<body>
+
+<!-- Cursor -->
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- Page transition -->
+<div class="page-transition exiting" id="pageTransition"></div>
+
+<!-- ── NAV ── -->
+<nav id="mainNav">
+  <a href="index.html" class="nav-logo">capture®</a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="index.html#about">About me</a>
+    <a href="portfolio.html" class="active">Portfolio</a>
+  </div>
+  <button class="nav-cta">Contact me</button>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero" id="hero">
+  <img class="hero-img" id="heroImg"
+    src="assets/portfolio-hero.png"
+    alt="Portfolio hero"
+  />
+  <div class="hero-title">Portfolio</div>
+</section>
+
+<!-- ── FILTER BAR ── -->
+<div class="filter-bar reveal">
+  <button class="filter-btn active" data-filter="all">All</button>
+  <button class="filter-btn" data-filter="wedding">Weddings</button>
+  <button class="filter-btn" data-filter="portrait">Portraits</button>
+  <button class="filter-btn" data-filter="events">Events</button>
+  <button class="filter-btn" data-filter="fashion">Fashion</button>
+  <button class="filter-btn" data-filter="landscape">Landscape</button>
+</div>
+
+<!-- ── GRID ── -->
+<div class="portfolio-grid reveal-stagger" id="portfolioGrid">
+  <div class="grid-circle" aria-hidden="true"></div>
+
+  <!-- 1: Winter Hike -->
+  <div class="proj-item" data-category="landscape" onclick="openLightbox(0)">
+    <div class="proj-img">
+      <img src="assets/proj1.png" alt="Winter Hike in the Mountains" loading="lazy" />
+      <div class="proj-overlay">
+        <button class="proj-view-btn">View</button>
+      </div>
+    </div>
+    <span class="proj-title">Winter Hike in the Mountains</span>
+  </div>
+
+  <!-- 2: Professional Photography (offset up) -->
+  <div class="proj-item" data-category="portrait" onclick="openLightbox(1)">
+    <div class="proj-img">
+      <img src="assets/proj2.png" alt="Professional Photography" loading="lazy" />
+      <div class="proj-overlay">
+        <button class="proj-view-btn">View</button>
+      </div>
+    </div>
+    <span class="proj-title">Professional Photography</span>
+  </div>
+
+  <!-- 3: Product Action Photography -->
+  <div class="proj-item" data-category="events" onclick="openLightbox(2)">
+    <div class="proj-img">
+      <img src="assets/proj4.png" alt="Product Action Photography" loading="lazy" />
+      <div class="proj-overlay">
+        <button class="proj-view-btn">View</button>
+      </div>
+    </div>
+    <span class="proj-title">Product Action Photography</span>
+  </div>
+
+  <!-- 4: Mystic Meadow (wide) -->
+  <div class="proj-item" data-category="landscape" onclick="openLightbox(3)">
+    <div class="proj-img wide">
+      <img src="assets/proj3.png" alt="Mystic Meadow" loading="lazy" />
+      <div class="proj-overlay">
+        <button class="proj-view-btn">View</button>
+      </div>
+    </div>
+    <span class="proj-title">Mystic Meadow</span>
+  </div>
+
+  <!-- 5: Bride and Groom -->
+  <div class="proj-item" data-category="wedding" onclick="openLightbox(4)">
+    <div class="proj-img">
+      <img src="assets/proj5.png" alt="Bride and Groom" loading="lazy" />
+      <div class="proj-overlay">
+        <button class="proj-view-btn">View</button>
+      </div>
+    </div>
+    <span class="proj-title">Bride and Groom</span>
+  </div>
+
+  <!-- 6: Winter Fashion Portrait -->
+  <div class="proj-item" data-category="fashion" onclick="openLightbox(5)">
+    <div class="proj-img">
+      <img src="assets/proj-winter-fashion.png" alt="Winter Fashion Portrait" loading="lazy" />
+      <div class="proj-overlay">
+        <button class="proj-view-btn">View</button>
+      </div>
+    </div>
+    <span class="proj-title">Winter Fashion Portrait</span>
+  </div>
+
+  <!-- 7: Clothing Show -->
+  <div class="proj-item" data-category="fashion" onclick="openLightbox(6)">
+    <div class="proj-img">
+      <img src="assets/proj4.png" alt="Clothing Show" loading="lazy" />
+      <div class="proj-overlay">
+        <button class="proj-view-btn">View</button>
+      </div>
+    </div>
+    <span class="proj-title">Clothing Show</span>
+  </div>
+
+  <!-- 8: Dynamic Skiing Action -->
+  <div class="proj-item" data-category="events" onclick="openLightbox(7)">
+    <div class="proj-img">
+      <img src="assets/testimonial.png" alt="Dynamic Skiing Action" loading="lazy" />
+      <div class="proj-overlay">
+        <button class="proj-view-btn">View</button>
+      </div>
+    </div>
+    <span class="proj-title">Dynamic Skiing Action</span>
+  </div>
+</div>
+
+<!-- ── TAGLINE MARQUEE ── -->
+<div class="tagline-section">
+  <div class="marquee-track" id="marqueeTrack">
+    <span class="marquee-text">I don't shoot images—I shoot truth.</span>
+    <span class="marquee-text" aria-hidden="true">I don't shoot images—I shoot truth.</span>
+    <span class="marquee-text" aria-hidden="true">I don't shoot images—I shoot truth.</span>
+  </div>
+</div>
+
+<!-- ── FOOTER ── -->
+<footer id="contact">
+  <div class="footer-top">
+    <h2 class="footer-heading reveal">Let's capture your<br/><span style="font-style:normal;font-weight:700;">best moment</span></h2>
+    <div></div>
+    <div class="reveal" style="display:flex;flex-direction:column;gap:32px;">
+      <div>
+        <div class="footer-col-label">Email</div>
+        <div class="footer-col-value">capture@gmail.com</div>
+      </div>
+      <div>
+        <div class="footer-col-label">Call me</div>
+        <div class="footer-col-value">Book Now</div>
+      </div>
+      <div>
+        <div class="footer-col-label">Social</div>
+        <div class="footer-social-row">
+          <a class="footer-social-btn" href="#" aria-label="Facebook">f</a>
+          <a class="footer-social-btn" href="#" aria-label="Instagram">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5" stroke="#010101" stroke-width="2"/>
+              <circle cx="12" cy="12" r="4" stroke="#010101" stroke-width="2"/>
+              <circle cx="17.5" cy="6.5" r="1.5" fill="#010101"/>
+            </svg>
+          </a>
+          <a class="footer-social-btn" href="#" aria-label="LinkedIn">in</a>
+          <a class="footer-social-btn" href="#" aria-label="X/Twitter">𝕏</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 2fr;gap:40px;padding:48px 0 0;">
+    <div class="footer-nav reveal">
+      <a href="index.html">Home</a>
+      <a href="index.html#about">About me</a>
+      <a href="portfolio.html">Portfolio</a>
+      <a href="index.html#services">Services</a>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:flex-end;" class="reveal">
+      <span class="footer-copy">© 2025 capture</span>
+    </div>
+  </div>
+
+  <div class="footer-wordmark">
+    <span class="footer-wordmark-text">capture®</span>
+    <div class="footer-frosted"></div>
+  </div>
+</footer>
+
+<!-- ── LIGHTBOX ── -->
+<div class="lightbox" id="lightbox" onclick="closeLightboxOutside(event)">
+  <div class="lb-inner">
+    <button class="lb-close" onclick="closeLightbox()" aria-label="Close">
+      <svg viewBox="0 0 16 16" fill="none">
+        <path d="M2 2l12 12M14 2L2 14" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <button class="lb-nav prev" onclick="shiftLightbox(-1)" aria-label="Previous">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M10 3L5 8l5 5" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <button class="lb-nav next" onclick="shiftLightbox(1)" aria-label="Next">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M6 3l5 5-5 5" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <div class="lb-img">
+      <img id="lbImg" src="assets/proj1.png" alt="" style="display:none;" />
+    </div>
+    <div class="lb-caption" id="lbCaption"></div>
+  </div>
+</div>
+
+<script>
+// ── PAGE TRANSITION IN ──
+window.addEventListener('load', () => {
+  const pt = document.getElementById('pageTransition');
+  // already .exiting (scaleY(0) from top), nothing to do — page just appears
+  // animate the hero title in
+  setTimeout(() => {
+    document.querySelector('.hero-title').style.cssText =
+      'transform:none; opacity:1; transition: opacity 0.9s ease 0.2s, transform 0.9s ease 0.2s;';
+  }, 50);
+});
+
+// Set hero title initial state
+document.querySelector('.hero-title').style.cssText =
+  'opacity:0; transform: translateY(30px);';
+
+// ── NAV PAGE TRANSITIONS ──
+document.querySelectorAll('a[href="index.html"], a[href^="index.html"]').forEach(link => {
+  link.addEventListener('click', e => {
+    const href = link.getAttribute('href');
+    if (href === location.pathname || href === location.href) return;
+    e.preventDefault();
+    const pt = document.getElementById('pageTransition');
+    pt.classList.remove('exiting');
+    pt.style.transition = 'transform 0.45s cubic-bezier(0.76,0,0.24,1)';
+    pt.style.transformOrigin = 'bottom';
+    pt.style.transform = 'scaleY(1)';
+    setTimeout(() => { window.location.href = href; }, 460);
+  });
+});
+
+// ── CURSOR ──
+const dot = document.getElementById('cursorDot');
+const ring = document.getElementById('cursorRing');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  dot.style.left = mx + 'px'; dot.style.top = my + 'px';
+});
+function animRing() {
+  rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+  ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+  requestAnimationFrame(animRing);
+}
+animRing();
+document.querySelectorAll('a, button, .proj-item, .filter-btn').forEach(el => {
+  el.addEventListener('mouseenter', () => { ring.style.width='60px'; ring.style.height='60px'; });
+  el.addEventListener('mouseleave', () => { ring.style.width='40px'; ring.style.height='40px'; });
+});
+
+// ── NAV SCROLL ──
+const nav = document.getElementById('mainNav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 40);
+}, { passive: true });
+
+// ── HERO PARALLAX ──
+const heroImg = document.getElementById('heroImg');
+window.addEventListener('scroll', () => {
+  heroImg.style.transform = `translateY(${window.scrollY * 0.22}px)`;
+}, { passive: true });
+
+// ── REVEAL ON SCROLL ──
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal, .reveal-stagger').forEach(el => observer.observe(el));
+
+// ── FILTER ──
+const filterBtns = document.querySelectorAll('.filter-btn');
+filterBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    filterBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const filter = btn.dataset.filter;
+    const items = document.querySelectorAll('.proj-item');
+    items.forEach(item => {
+      const show = filter === 'all' || item.dataset.category === filter;
+      item.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
+      if (show) {
+        item.style.opacity = '1';
+        item.style.transform = '';
+        item.style.pointerEvents = '';
+      } else {
+        item.style.opacity = '0';
+        item.style.transform = 'scale(0.96)';
+        item.style.pointerEvents = 'none';
+      }
+    });
+  });
+});
+
+// ── MARQUEE ──
+const track = document.getElementById('marqueeTrack');
+let marqueeX = 0;
+function animMarquee() {
+  marqueeX -= 0.6;
+  const w = track.children[0].offsetWidth + 60;
+  if (Math.abs(marqueeX) >= w) marqueeX += w;
+  track.style.transform = `translateX(${marqueeX}px)`;
+  requestAnimationFrame(animMarquee);
+}
+animMarquee();
+
+// ── LIGHTBOX ──
+const projects = [
+  { src: 'assets/proj1.png', title: 'Winter Hike in the Mountains' },
+  { src: 'assets/proj2.png', title: 'Professional Photography' },
+  { src: 'assets/proj4.png', title: 'Product Action Photography' },
+  { src: 'assets/proj3.png', title: 'Mystic Meadow' },
+  { src: 'assets/proj5.png', title: 'Bride and Groom' },
+  { src: 'assets/proj-winter-fashion.png', title: 'Winter Fashion Portrait' },
+  { src: 'assets/proj4.png', title: 'Clothing Show' },
+  { src: 'assets/testimonial.png', title: 'Dynamic Skiing Action' },
+];
+
+let lbCurrent = 0;
+const lightbox = document.getElementById('lightbox');
+const lbImg = document.getElementById('lbImg');
+const lbCaption = document.getElementById('lbCaption');
+
+function openLightbox(idx) {
+  lbCurrent = idx;
+  lbImg.src = projects[idx].src;
+  lbImg.alt = projects[idx].title;
+  lbImg.style.display = '';
+  lbCaption.textContent = projects[idx].title;
+  lightbox.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  lightbox.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function closeLightboxOutside(e) {
+  if (e.target === lightbox) closeLightbox();
+}
+
+function shiftLightbox(dir) {
+  lbCurrent = (lbCurrent + dir + projects.length) % projects.length;
+  lbImg.style.opacity = '0';
+  lbImg.style.transform = `translateX(${dir * 40}px)`;
+  lbImg.style.transition = 'opacity 0.2s, transform 0.2s';
+  setTimeout(() => {
+    lbImg.src = projects[lbCurrent].src;
+    lbImg.alt = projects[lbCurrent].title;
+    lbCaption.textContent = projects[lbCurrent].title;
+    lbImg.style.transform = `translateX(${-dir * 30}px)`;
+    setTimeout(() => {
+      lbImg.style.opacity = '1';
+      lbImg.style.transform = 'translateX(0)';
+    }, 50);
+  }, 200);
+}
+
+document.addEventListener('keydown', e => {
+  if (!lightbox.classList.contains('open')) return;
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowLeft') shiftLightbox(-1);
+  if (e.key === 'ArrowRight') shiftLightbox(1);
+});
+</script>
+</body>
+</html>
